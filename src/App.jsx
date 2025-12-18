@@ -1,7 +1,28 @@
 import React from "react";
+import DragAndDrop from "./DragAndDrop";
 
 const App = () => {
-  return <div>Hey hai i am app</div>;
+  const taskData = {
+    Office_Task: [
+      { id: "off_01", title: "Go to Office" },
+      { id: "off_02", title: "Have Breakfast At office" },
+      { id: "off_03", title: "Work At Office" },
+      { id: "off_04", title: "Go to Home" },
+    ],
+    Home_Task: [
+      { id: "home_01", title: "Go To Home" },
+      { id: "home_02", title: "Have Dinner" },
+      { id: "home_03", title: "Go To Sleep" },
+      { id: "home_04", title: "Watch TV" },
+    ],
+    Sunday_Task: [
+      { id: "sun_01", title: "Sleep till late" },
+      { id: "sun_02", title: "Have Breakfast" },
+      { id: "sun_03", title: "Go to Gym" },
+      { id: "sun_04", title: "Go out" },
+    ],
+  };
+  return <DragAndDrop data={taskData} />;
 };
 
 export default App;
