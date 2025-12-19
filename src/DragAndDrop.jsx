@@ -1,7 +1,17 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 const DragAndDrop = ({ data: initialData }) => {
-  const [data, setData] = useState(initialData);
+  const [data, setData] = useState(() => {
+    const savedData = localStorage.getItem("taskData");
+    if (savedData) {
+      return JSON.parse(savedData);
+    }
+    return initialData;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("taskData", JSON.stringify(data));
+  }, [data]);
 
   const mainHeadings = Object.keys(data);
 
@@ -33,18 +43,43 @@ const DragAndDrop = ({ data: initialData }) => {
     const dest = dragOverItem.current;
     if (!source || !dest) return NULL;
     setData((prev) => {
-      let newSourceList = [...prev[source.heading]];
-      let newDestinationList = [...prev[dest.heading]];
+      // this means we are using drag and drop in same list
+      if (source.heading == dest.heading) {
+        const list = [...prev[source.heading]];
+        const sourceIdx = source.idx;
+        const destinationIdx = dest.idx;
+        const [removedItem] = list.splice(sourceIdx, 1);
+        list.splice(destinationIdx, 0, removedItem);
+        return {
+          ...prev,
+          [source.heading]: list,
+        };
+      } else {
+        const sourceList = [...prev[source.heading]];
+        const destinationList = [...prev[dest.heading]];
+        const sourceIdx = source.idx;
+        const destinationIdx = dest.idx;
+        const [removedItem] = sourceList.splice(sourceIdx, 1);
+        destinationList.splice(destinationIdx, 0, removedItem);
+        return {
+          ...prev,
+          [source.heading]: sourceList,
+          [dest.heading]: destinationList,
+        };
+      }
 
-      const [removedItem] = newSourceList.splice(source.idx, 1);
-      newDestinationList.splice(dest.idx, 0, removedItem);
+      //
+      //
 
-      return {
-        ...prev,
-        [source.heading]: newSourceList,
-        [dest.heading]: newDestinationList,
-      };
+      // return {
+      //   ...prev,
+      //   [source.heading]: newSourceList,
+      //   [dest.heading]: newDestinationList,
+      // };
     });
+
+    dragItem.current = null;
+    dragOverItem.current = null;
   }
   return (
     <div style={style.root}>
